@@ -122,4 +122,61 @@ mod tests {
         assert_eq!(operator_id, amy.id);
         assert_invariants(&conn);
     }
+
+    #[test]
+    fn preview_and_apply_baseline_from_xlsx() {
+        let mut conn = test_db();
+        let now = Utc::now();
+        let input = crate::dto::SetupInput {
+            language: crate::dto::Language::En,
+            company_name: "PT. CHANG PING INDONESIA".into(),
+            admin: crate::dto::EmployeeInput {
+                id: None,
+                employee_code: "1024".into(),
+                name: "Alex".into(),
+                role: crate::dto::Role::Admin,
+            },
+            employees: vec![],
+            location: crate::dto::SetupLocationInput {
+                code: "GS8-21".into(),
+                name: "GS 8A NO 21".into(),
+                location_type: crate::dto::LocationType::Warehouse,
+            },
+        };
+        crate::services::setup::complete_setup(&mut conn, &input, now).unwrap();
+        let admin = crate::repo::employees::find_by_code(&conn, "1024")
+            .unwrap()
+            .unwrap();
+        let dir = std::env::temp_dir().join(format!("stockscan-apply-{}", std::process::id()));
+        let _ = std::fs::create_dir_all(&dir);
+        let path = dir.join("full.xlsx");
+        crate::importers::synthetic::write_xlsx_catalog(&path, 1284).unwrap();
+        let preview = crate::services::import::preview_stock_report(
+            &mut conn,
+            &path,
+            admin.id,
+            crate::dto::ImportPurpose::Baseline,
+            None,
+            now,
+        )
+        .unwrap();
+        assert_eq!(preview.counts.data_rows, 1284);
+        assert!(preview.can_apply);
+        let applied = crate::services::import::apply_baseline(&mut conn, preview.import_id, admin.id, now)
+            .unwrap();
+        assert_eq!(applied.balances, 1284);
+        let inventory = crate::services::inventory::list(&conn).unwrap();
+        assert_eq!(inventory.len(), 1284);
+        let expected = crate::importers::synthetic::catalog_1284();
+        for (row, (name, pack, qty)) in inventory.iter().zip(expected) {
+            assert_eq!(row.name, name);
+            assert_eq!(row.pack_size, Some(pack));
+            assert_eq!(row.baseline_quantity, qty);
+            assert_eq!(row.current_quantity, qty);
+        }
+        let err = crate::services::import::apply_baseline(&mut conn, preview.import_id, admin.id, now)
+            .unwrap_err();
+        assert_eq!(err.code(), "BASELINE_EXISTS");
+        assert_invariants(&conn);
+    }
 }

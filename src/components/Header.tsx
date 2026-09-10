@@ -1,10 +1,13 @@
 import { Barcode, ChevronDown, Settings, TriangleAlert, Warehouse } from "lucide-react";
 import { useTranslation } from "react-i18next";
 import { NavLink, useLocation, useNavigate } from "react-router";
+import { useQuery } from "@tanstack/react-query";
 import clsx from "clsx";
 import { LanguageSwitcher } from "./LanguageSwitcher";
 import { useOperatorStore } from "../stores/operatorStore";
 import type { StartupState } from "../bindings/StartupState";
+import { api } from "../lib/api";
+import { qk } from "../app/queryClient";
 
 const NAV = [
   { to: "/scan", key: "nav.scan" },
@@ -19,6 +22,8 @@ export function Header({ startup }: { startup: StartupState | undefined }) {
   const location = useLocation();
   const operator = useOperatorStore((s) => s.operator);
   const setOperator = useOperatorStore((s) => s.setOperator);
+  const exceptions = useQuery({ queryKey: qk.exceptionsCount, queryFn: api.countOpenExceptions });
+  const exceptionCount = exceptions.data ?? 0;
   const initials = operator
     ? operator.name
         .split(/\s+/)
@@ -69,13 +74,23 @@ export function Header({ startup }: { startup: StartupState | undefined }) {
 
         <button
           type="button"
-          onClick={() => navigate("/inventory")}
-          className="flex items-center gap-2 h-9 px-3 rounded-lg bg-warn-tint border border-warn-line text-warn text-[13px] font-semibold"
+          onClick={() => navigate("/inventory?filter=exceptions")}
+          className={clsx(
+            "flex items-center gap-2 h-9 px-3 rounded-lg text-[13px] font-semibold",
+            exceptionCount > 0
+              ? "bg-warn-tint border border-warn-line text-warn"
+              : "border border-line text-sub",
+          )}
         >
           <TriangleAlert className="w-4 h-4" strokeWidth={2} />
           {t("nav.exceptions")}
-          <span className="min-w-5 h-5 px-1.5 rounded-full bg-warn text-white text-xs flex items-center justify-center">
-            0
+          <span
+            className={clsx(
+              "min-w-5 h-5 px-1.5 rounded-full text-xs flex items-center justify-center",
+              exceptionCount > 0 ? "bg-warn text-white" : "bg-soft text-sub",
+            )}
+          >
+            {exceptionCount}
           </span>
         </button>
 

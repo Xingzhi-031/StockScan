@@ -25,6 +25,16 @@ describe("errorMessage", () => {
   it("falls back to the error code", () => {
     expect(errorMessage({ code: "NOT_FOUND", message: "not found: employee" }, t)).toBe("missing");
   });
+
+  it("uses ImportIssue.kind from details", () => {
+    const tKind = (key: string) => (key === "errors.HEADER_NOT_FOUND" ? "no header" : key);
+    expect(
+      errorMessage(
+        { code: "IMPORT_ERROR", message: "import failed", details: { kind: "HEADER_NOT_FOUND" } },
+        tKind,
+      ),
+    ).toBe("no header");
+  });
 });
 
 describe("toAppError", () => {

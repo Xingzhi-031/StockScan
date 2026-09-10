@@ -1,5 +1,13 @@
 import { describe, expect, it } from "vitest";
-import { fmtBackupPhrase, fmtCartonSplit, fmtQty, fmtSigned } from "./format";
+import {
+  fmtAsOfDate,
+  fmtBackupPhrase,
+  fmtCartonSplit,
+  fmtQty,
+  fmtSigned,
+  fmtUpdated,
+  isJakartaToday,
+} from "./format";
 
 describe("fmtQty", () => {
   it("uses a minus sign and locale grouping", () => {
@@ -31,6 +39,40 @@ describe("fmtCartonSplit", () => {
   it("splits cartons and leftover pieces", () => {
     expect(fmtCartonSplit(1142, 100, t)).toBe("11 ctn + 42 pcs");
     expect(fmtCartonSplit(200, 100, t)).toBe("2 ctn");
+  });
+});
+
+describe("fmtUpdated", () => {
+  const now = new Date("2026-09-10T10:00:00.000Z");
+
+  it("shows Jakarta time when the stamp is today", () => {
+    expect(fmtUpdated("2026-09-10T08:31:00.000Z", now, "en")).toBe("15:31");
+  });
+
+  it("shows a short date when the stamp is another Jakarta day", () => {
+    const text = fmtUpdated("2026-09-09T08:00:00.000Z", now, "en");
+    expect(text).toMatch(/09/);
+    expect(text).toMatch(/Sep/i);
+  });
+
+  it("shows an em dash when missing", () => {
+    expect(fmtUpdated(null, now, "en")).toBe("—");
+  });
+});
+
+describe("isJakartaToday", () => {
+  const now = new Date("2026-09-10T10:00:00.000Z");
+  it("is true for the same Jakarta calendar day", () => {
+    expect(isJakartaToday("2026-09-10T01:00:00.000Z", now)).toBe(true);
+    expect(isJakartaToday("2026-09-09T08:00:00.000Z", now)).toBe(false);
+  });
+});
+
+describe("fmtAsOfDate", () => {
+  it("formats a naive report date in Jakarta", () => {
+    expect(fmtAsOfDate("2026-09-09", "en")).toMatch(/09/);
+    expect(fmtAsOfDate("2026-09-09", "en")).toMatch(/Sep/i);
+    expect(fmtAsOfDate("2026-09-09", "en")).toMatch(/2026/);
   });
 });
 

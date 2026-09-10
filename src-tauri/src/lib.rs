@@ -3,6 +3,7 @@ mod db;
 mod dev_seed;
 pub mod dto;
 mod error;
+mod importers;
 mod repo;
 mod services;
 mod state;
@@ -64,6 +65,14 @@ pub fn run() {
             commands::upsert_employee,
             commands::set_employee_active,
             commands::select_operator,
+            commands::preview_stock_report,
+            commands::set_report_options,
+            commands::apply_baseline_import,
+            commands::cancel_import,
+            commands::list_inventory,
+            commands::get_product_detail,
+            commands::count_open_exceptions,
+            commands::dev_write_sample_report,
             commands::dev_seed_demo,
         ])
         .run(tauri::generate_context!())

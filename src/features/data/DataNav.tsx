@@ -12,7 +12,7 @@ const LINKS = [
 export function DataLayout() {
   const { t } = useTranslation();
   return (
-    <div className="flex flex-1 gap-6 min-h-0">
+    <div className="flex flex-1 min-h-0 gap-6">
       <aside className="w-52 shrink-0 flex flex-col gap-1">
         {LINKS.map((link) => (
           <NavLink
@@ -29,7 +29,7 @@ export function DataLayout() {
           </NavLink>
         ))}
       </aside>
-      <div className="flex-1 min-w-0">
+      <div className="flex-1 min-w-0 min-h-0 flex flex-col">
         <Outlet />
       </div>
     </div>

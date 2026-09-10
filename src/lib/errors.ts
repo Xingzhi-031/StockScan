@@ -44,8 +44,14 @@ type Translate = (key: string, vars?: Record<string, unknown>) => string;
 export function errorMessage(e: unknown, t: Translate): string {
   const err = toAppError(e);
   const reason = typeof err.details?.reason === "string" ? err.details.reason : "";
+  const kind = typeof err.details?.kind === "string" ? err.details.kind : "";
   if (reason) {
     const key = `errors.${reason}`;
+    const translated = t(key, err.details);
+    if (translated !== key) return translated;
+  }
+  if (kind) {
+    const key = `errors.${kind}`;
     const translated = t(key, err.details);
     if (translated !== key) return translated;
   }

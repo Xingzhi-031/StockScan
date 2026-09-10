@@ -1,12 +1,30 @@
 use serde::ser::{Serialize, SerializeStruct, Serializer};
 use serde_json::{json, Value};
+use ts_rs::TS;
 
-#[derive(Debug, Clone, serde::Serialize, serde::Deserialize)]
+#[derive(Debug, Clone, serde::Serialize, serde::Deserialize, TS, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
+#[ts(export)]
 pub struct ImportIssue {
     pub kind: String,
     #[serde(skip_serializing_if = "Option::is_none")]
     pub message: Option<String>,
+}
+
+impl ImportIssue {
+    pub fn new(kind: impl Into<String>, message: impl Into<String>) -> Self {
+        Self {
+            kind: kind.into(),
+            message: Some(message.into()),
+        }
+    }
+
+    pub fn kind_only(kind: impl Into<String>) -> Self {
+        Self {
+            kind: kind.into(),
+            message: None,
+        }
+    }
 }
 
 #[derive(Debug, thiserror::Error)]

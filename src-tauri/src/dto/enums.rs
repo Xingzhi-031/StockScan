@@ -88,6 +88,88 @@ impl Role {
     }
 }
 
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, TS, PartialEq, Eq)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[ts(export)]
+pub enum FileFormat {
+    Xls,
+    Xlsx,
+    Html,
+    Spreadsheetml,
+    Csv,
+}
+
+impl FileFormat {
+    pub fn as_db(self) -> &'static str {
+        match self {
+            Self::Xls => "XLS",
+            Self::Xlsx => "XLSX",
+            Self::Html => "HTML",
+            Self::Spreadsheetml => "SPREADSHEETML",
+            Self::Csv => "CSV",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, TS, PartialEq, Eq)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[ts(export)]
+pub enum ImportPurpose {
+    Baseline,
+    Reconcile,
+}
+
+impl ImportPurpose {
+    pub fn as_db(self) -> &'static str {
+        match self {
+            Self::Baseline => "BASELINE",
+            Self::Reconcile => "RECONCILE",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, TS, PartialEq, Eq)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[ts(export)]
+pub enum ColumnTarget {
+    Name,
+    PackSize,
+    Stock,
+    KoliCheck,
+    Price,
+    ExternalCode,
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, TS, PartialEq, Eq)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[ts(export)]
+pub enum MatchStatus {
+    Matched,
+    New,
+    Ambiguous,
+    Invalid,
+}
+
+impl MatchStatus {
+    pub fn as_db(self) -> &'static str {
+        match self {
+            Self::Matched => "MATCHED",
+            Self::New => "NEW",
+            Self::Ambiguous => "AMBIGUOUS",
+            Self::Invalid => "INVALID",
+        }
+    }
+
+    pub fn from_db(s: &str) -> Self {
+        match s {
+            "MATCHED" => Self::Matched,
+            "AMBIGUOUS" => Self::Ambiguous,
+            "INVALID" => Self::Invalid,
+            _ => Self::New,
+        }
+    }
+}
+
 impl LocationType {
     pub fn as_db(self) -> &'static str {
         match self {

@@ -1,5 +1,7 @@
 pub mod backup;
 pub mod employees;
+pub mod import;
+pub mod inventory;
 pub mod sessions;
 pub mod settings;
 pub mod setup;
