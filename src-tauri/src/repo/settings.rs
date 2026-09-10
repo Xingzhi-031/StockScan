@@ -151,3 +151,11 @@ pub fn save_settings(conn: &Connection, s: &Settings, now_iso: &str) -> Result<(
     )?;
     Ok(())
 }
+
+pub fn take_next_session_number(conn: &Connection, now_iso: &str) -> Result<i64, AppError> {
+    let mut s = load_settings(conn)?;
+    let n = s.session.next_number.max(1);
+    s.session.next_number = n + 1;
+    set_json(conn, "session.next_number", &s.session.next_number, now_iso)?;
+    Ok(n)
+}

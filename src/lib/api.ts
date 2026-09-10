@@ -12,6 +12,21 @@ import type { SettingsPatch } from "../bindings/SettingsPatch";
 import type { SetupInput } from "../bindings/SetupInput";
 import type { StartupState } from "../bindings/StartupState";
 import type { StockReportPreview } from "../bindings/StockReportPreview";
+import type { BarcodeCoverage } from "../bindings/BarcodeCoverage";
+import type { BarcodeImportApplyResult } from "../bindings/BarcodeImportApplyResult";
+import type { BarcodeImportPreview } from "../bindings/BarcodeImportPreview";
+import type { CheckBarcodeResult } from "../bindings/CheckBarcodeResult";
+import type { CommitTxInput } from "../bindings/CommitTxInput";
+import type { ExportResult } from "../bindings/ExportResult";
+import type { IdentifierType } from "../bindings/IdentifierType";
+import type { LinkBarcodeInput } from "../bindings/LinkBarcodeInput";
+import type { ProductCard } from "../bindings/ProductCard";
+import type { RecentLink } from "../bindings/RecentLink";
+import type { ResolveResult } from "../bindings/ResolveResult";
+import type { SessionSummary } from "../bindings/SessionSummary";
+import type { TxPage } from "../bindings/TxPage";
+import type { TxResult } from "../bindings/TxResult";
+import type { TxRow } from "../bindings/TxRow";
 import { toAppError, type AppError } from "./errors";
 
 export function isTauriRuntime() {
@@ -65,12 +80,17 @@ type MockDb = {
   employees: EmployeeDto[];
   nextId: number;
   nextImportId: number;
+  nextTxId: number;
+  nextSession: number;
   companyName: string | null;
   locationName: string | null;
   locationCode: string | null;
   settings: Settings;
   inventory: InventoryRow[];
   identifiers: Map<number, IdentifierDto[]>;
+  txs: TxRow[];
+  session: SessionSummary | null;
+  links: RecentLink[];
 };
 
 const mock: MockDb = {
@@ -84,6 +104,11 @@ const mock: MockDb = {
   settings: defaultSettings(),
   inventory: [],
   identifiers: new Map(),
+  txs: [],
+  session: null,
+  links: [],
+  nextTxId: 1,
+  nextSession: 1,
 };
 
 function mockStartup(): StartupState {
@@ -261,6 +286,141 @@ function applyPatch(patch: SettingsPatch): Settings {
   return s;
 }
 
+function mockCard(row: InventoryRow): ProductCard {
+  return {
+    productId: row.productId,
+    name: row.name,
+    modelCode: row.modelCode,
+    packSize: row.packSize,
+    referencePrice: row.referencePrice,
+    locationId: 1,
+    baselineQuantity: row.baselineQuantity,
+    currentQuantity: row.currentQuantity,
+    baselineAsOf: row.baselineAsOf,
+  };
+}
+
+function detectMockType(code: string): IdentifierType {
+  if (/^\d{13}$/.test(code)) return "EAN13";
+  if (/[A-Za-z]/.test(code)) return "CODE128";
+  return "OTHER";
+}
+
+function mockEnsureSession(operatorId: number): SessionSummary {
+  const emp = mock.employees.find((e) => e.id === operatorId);
+  if (!mock.session || mock.session.operatorId !== operatorId) {
+    mock.session = {
+      id: mock.nextSession++,
+      sessionNumber: mock.nextSession - 1,
+      operatorId,
+      operatorName: emp?.name ?? "Op",
+      startedAt: new Date().toISOString(),
+      lastActivityAt: new Date().toISOString(),
+      txCount: 0,
+      productCount: 0,
+      totalUnits: 0,
+      netChange: 0,
+      byOperation: [],
+    };
+  }
+  return mock.session;
+}
+
+function mockCommit(input: CommitTxInput): TxResult {
+  const row = mock.inventory.find((r) => r.productId === input.productId);
+  if (!row) fail("NOT_FOUND", "product");
+  const ids = mock.identifiers.get(input.productId) ?? [];
+  const idf = input.identifierCode ? ids.find((i) => i.code === input.identifierCode) : undefined;
+  if (input.identifierCode && !idf) fail("NOT_FOUND", "identifier");
+  const idMult = idf?.unitMultiplier ?? 1;
+  let unit = 1;
+  if (input.inputUom === "PCS") unit = idMult;
+  else if (input.inputUom === "CTN") {
+    if (idMult !== 1) fail("CARTON_BARCODE_WITH_CTN", "CARTON_BARCODE_WITH_CTN");
+    if (!row.packSize) {
+      const err: AppError = { code: "PACK_SIZE_MISSING", message: "pack size missing", details: { productId: row.productId } };
+      throw err;
+    }
+    unit = row.packSize;
+  }
+  const units = input.inputQuantity * unit;
+  let change = 0;
+  if (input.operation === "SALE") change = -units;
+  else if (input.operation === "STOCK_IN" || input.operation === "RETURN") change = units;
+  else if (input.operation === "ADJUSTMENT") change = input.inputQuantity - row.currentQuantity;
+  if (change === 0) fail("NO_CHANGE", "NO_CHANGE");
+  const before = row.currentQuantity;
+  const after = before + change;
+  if (change < 0 && after < 0 && !input.acknowledgeNegative) {
+    const err: AppError = { code: "NEEDS_ACK", message: "needs acknowledgement", details: { stockBefore: before, stockAfter: after } };
+    throw err;
+  }
+  const session = mockEnsureSession(input.operatorId);
+  const createdAt = new Date().toISOString();
+  const tx: TxRow = {
+    id: mock.nextTxId++,
+    createdAt,
+    operatorId: input.operatorId,
+    operatorName: session.operatorName,
+    operatorCode: mock.employees.find((e) => e.id === input.operatorId)?.employeeCode ?? "",
+    productId: row.productId,
+    productName: row.name,
+    modelCode: row.modelCode,
+    identifierCode: input.identifierCode,
+    operation: input.operation,
+    inputQuantity: input.inputQuantity,
+    inputUom: input.inputUom,
+    unitMultiplier: unit,
+    quantityChange: change,
+    stockBefore: before,
+    stockAfter: after,
+    sessionNumber: session.sessionNumber,
+    negativeWarning: after < 0,
+    reasonCode: input.reasonCode,
+    reversesTransactionId: null,
+    syncStatus: "LOCAL",
+  };
+  mock.txs.unshift(tx);
+  row.currentQuantity = after;
+  row.lastChangedAt = createdAt;
+  if (after < 0) row.openExceptionCount += 1;
+  session.txCount += 1;
+  session.totalUnits += Math.abs(change);
+  session.netChange += change;
+  session.lastActivityAt = createdAt;
+  session.productCount = new Set(mock.txs.filter((t) => t.sessionNumber === session.sessionNumber).map((t) => t.productId)).size;
+  return {
+    transactionId: tx.id,
+    clientTxnId: input.clientTxnId,
+    operation: input.operation,
+    quantityChange: change,
+    stockBefore: before,
+    stockAfter: after,
+    negativeWarning: after < 0 && change < 0,
+    session: { ...session },
+    createdAt,
+    idempotentReplay: false,
+    wasExported: false,
+  };
+}
+
+async function pickSavePath(defaultName: string): Promise<string | null> {
+  if (!isTauriRuntime()) return defaultName;
+  const { save } = await import("@tauri-apps/plugin-dialog");
+  return save({ defaultPath: defaultName, filters: [{ name: "Excel", extensions: ["xlsx"] }] });
+}
+
+async function pickBarcodeMapFile(): Promise<string | null> {
+  if (!isTauriRuntime()) return "barcodes.xlsx";
+  const { open } = await import("@tauri-apps/plugin-dialog");
+  const selected = await open({
+    multiple: false,
+    filters: [{ name: "Barcode map", extensions: ["xls", "xlsx"] }],
+  });
+  if (Array.isArray(selected)) return selected[0] ?? null;
+  return selected;
+}
+
 export const api = {
   getStartupState: () =>
     isTauriRuntime() ? call<StartupState>("get_startup_state") : Promise.resolve(mockStartup()),
@@ -406,4 +566,162 @@ export const api = {
     if (isTauriRuntime()) return call<string>("dev_write_sample_report", { rows: rows ?? null });
     return Promise.resolve(`accurate_stock_${rows ?? 1284}.xlsx`);
   },
+  resolveBarcode: (code: string) => {
+    if (isTauriRuntime()) return call<ResolveResult>("resolve_barcode", { code });
+    const trimmed = code.trim().replace(/[\r\n]/g, "");
+    for (const row of mock.inventory) {
+      if (row.barcodes.includes(trimmed)) {
+        const identifier = (mock.identifiers.get(row.productId) ?? []).find((i) => i.code === trimmed);
+        return Promise.resolve({ kind: "FOUND" as const, card: mockCard(row), identifier: identifier! });
+      }
+    }
+    return Promise.resolve({ kind: "UNKNOWN" as const, code: trimmed });
+  },
+  getProductCard: (productId: number) => {
+    if (isTauriRuntime()) return call<ProductCard>("get_product_card", { productId });
+    const row = mock.inventory.find((r) => r.productId === productId);
+    if (!row) fail("NOT_FOUND", "product");
+    return Promise.resolve(mockCard(row));
+  },
+  commitTransaction: (input: CommitTxInput) => {
+    if (isTauriRuntime()) return call<TxResult>("commit_transaction", { input });
+    return Promise.resolve(mockCommit(input));
+  },
+  undoLast: (operatorId: number, clientTxnId: string) => {
+    if (isTauriRuntime()) return call<TxResult>("undo_last", { operatorId, clientTxnId });
+    const last = mock.txs.find((t) => t.operatorId === operatorId && t.operation !== "REVERSAL");
+    if (!last) fail("NOTHING_TO_UNDO", "NOTHING_TO_UNDO");
+    const row = mock.inventory.find((r) => r.productId === last.productId);
+    if (!row) fail("NOT_FOUND", "product");
+    const change = -last.quantityChange;
+    const before = row.currentQuantity;
+    const after = before + change;
+    row.currentQuantity = after;
+    const session = mockEnsureSession(operatorId);
+    const createdAt = new Date().toISOString();
+    const tx: TxRow = {
+      ...last,
+      id: mock.nextTxId++,
+      createdAt,
+      operation: "REVERSAL",
+      quantityChange: change,
+      stockBefore: before,
+      stockAfter: after,
+      reversesTransactionId: last.id,
+      inputUom: "SYSTEM",
+    };
+    mock.txs.unshift(tx);
+    return Promise.resolve({
+      transactionId: tx.id,
+      clientTxnId,
+      operation: "REVERSAL" as const,
+      quantityChange: change,
+      stockBefore: before,
+      stockAfter: after,
+      negativeWarning: after < 0 && change < 0,
+      session: { ...session },
+      createdAt,
+      idempotentReplay: false,
+      wasExported: last.syncStatus !== "LOCAL",
+    });
+  },
+  getCurrentSession: (operatorId: number) => {
+    if (isTauriRuntime()) return call<SessionSummary | null>("get_current_session", { operatorId });
+    return Promise.resolve(mock.session && mock.session.operatorId === operatorId ? { ...mock.session } : null);
+  },
+  finishSession: (operatorId: number) => {
+    if (isTauriRuntime()) return call<SessionSummary | null>("finish_session", { operatorId });
+    const s = mock.session && mock.session.operatorId === operatorId ? { ...mock.session } : null;
+    mock.session = null;
+    return Promise.resolve(s);
+  },
+  listTransactions: (q: { sessionId?: number; productId?: number; cursor?: number; limit?: number }) => {
+    if (isTauriRuntime()) return call<TxPage>("list_transactions", q);
+    let rows = mock.txs;
+    if (q.sessionId != null) rows = rows.filter((t) => mock.session && t.sessionNumber === mock.session.sessionNumber);
+    if (q.productId != null) rows = rows.filter((t) => t.productId === q.productId);
+    return Promise.resolve({ rows: rows.slice(0, q.limit ?? 100), nextCursor: null });
+  },
+  getBarcodeCoverage: () => {
+    if (isTauriRuntime()) return call<BarcodeCoverage>("get_barcode_coverage");
+    const products = mock.inventory.length;
+    const linked = mock.inventory.filter((r) => r.barcodeCount > 0).length;
+    return Promise.resolve({ products, linked, unlinked: products - linked });
+  },
+  nextUnlinkedProduct: (afterProductId?: number | null) => {
+    if (isTauriRuntime()) return call<ProductCard | null>("next_unlinked_product", { afterProductId: afterProductId ?? null });
+    const row = mock.inventory.find((r) => r.barcodeCount === 0 && r.productId !== (afterProductId ?? 0));
+    return Promise.resolve(row ? mockCard(row) : null);
+  },
+  checkBarcode: (code: string) => {
+    if (isTauriRuntime()) return call<CheckBarcodeResult>("check_barcode", { code });
+    for (const [pid, ids] of mock.identifiers) {
+      const hit = ids.find((i) => i.code === code);
+      if (hit) {
+        const p = mock.inventory.find((r) => r.productId === pid);
+        return Promise.resolve({
+          available: false,
+          detectedType: detectMockType(code),
+          checkDigitValid: null,
+          usedBy: p ? { productId: p.productId, name: p.name } : null,
+        });
+      }
+    }
+    return Promise.resolve({ available: true, detectedType: detectMockType(code), checkDigitValid: null, usedBy: null });
+  },
+  linkBarcode: (input: LinkBarcodeInput) => {
+    if (isTauriRuntime()) return call<IdentifierDto>("link_barcode", { input });
+    const row = mock.inventory.find((r) => r.productId === input.productId);
+    if (!row) fail("NOT_FOUND", "product");
+    const id: IdentifierDto = {
+      id: 10_000 + mock.nextId++,
+      code: input.code,
+      identifierType: detectMockType(input.code),
+      unitMultiplier: input.kind === "CARTON" ? (input.unitMultiplier ?? row.packSize ?? 1) : 1,
+    };
+    const list = mock.identifiers.get(input.productId) ?? [];
+    list.push(id);
+    mock.identifiers.set(input.productId, list);
+    row.barcodes.push(input.code);
+    row.barcodeCount = list.length;
+    mock.links.unshift({
+      identifierId: id.id,
+      code: id.code,
+      productId: input.productId,
+      productName: row.name,
+      action: "LINKED",
+      createdAt: new Date().toISOString(),
+    });
+    return Promise.resolve(id);
+  },
+  deactivateBarcode: (identifierId: number, operatorId: number, note: string) => {
+    if (isTauriRuntime()) return call<void>("deactivate_barcode", { identifierId, operatorId, note });
+    return Promise.resolve();
+  },
+  listRecentLinks: (limit = 20) => {
+    if (isTauriRuntime()) return call<RecentLink[]>("list_recent_links", { limit });
+    return Promise.resolve(mock.links.slice(0, limit));
+  },
+  exportBarcodeTemplate: (path: string, onlyUnlinked: boolean) => {
+    if (isTauriRuntime()) return call<ExportResult>("export_barcode_template", { path, onlyUnlinked });
+    return Promise.resolve({ rowCount: mock.inventory.filter((r) => !onlyUnlinked || r.barcodeCount === 0).length, path });
+  },
+  previewBarcodeImport: (path: string, operatorId: number) => {
+    if (isTauriRuntime()) return call<BarcodeImportPreview>("preview_barcode_import", { path, operatorId });
+    return Promise.resolve({
+      importId: mock.nextImportId++,
+      fileName: path,
+      lines: [],
+      linked: 0,
+      skipped: 0,
+      conflicts: 0,
+      canApply: false,
+    });
+  },
+  applyBarcodeImport: (importId: number, operatorId: number) => {
+    if (isTauriRuntime()) return call<BarcodeImportApplyResult>("apply_barcode_import", { importId, operatorId });
+    return Promise.resolve({ linked: 0, skipped: 0, conflicts: 0 });
+  },
+  pickSavePath: (name: string) => pickSavePath(name),
+  pickBarcodeMap: () => pickBarcodeMapFile(),
 };

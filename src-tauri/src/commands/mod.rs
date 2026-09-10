@@ -4,12 +4,16 @@ use crate::error::AppError;
 use crate::state::AppState;
 
 pub mod app;
+pub mod barcode;
 pub mod employees;
 pub mod import;
+pub mod transactions;
 
 pub use app::*;
+pub use barcode::*;
 pub use employees::*;
 pub use import::*;
+pub use transactions::*;
 
 pub async fn with_db<T, F>(state: &AppState, f: F) -> Result<T, AppError>
 where

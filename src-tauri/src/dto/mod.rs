@@ -4,6 +4,7 @@ pub mod import;
 pub mod inventory;
 pub mod settings;
 pub mod startup;
+pub mod tx;
 
 pub use employee::*;
 pub use enums::*;
@@ -11,6 +12,7 @@ pub use import::*;
 pub use inventory::*;
 pub use settings::*;
 pub use startup::*;
+pub use tx::*;
 
 #[cfg(test)]
 mod export_bindings {

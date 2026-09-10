@@ -1,16 +1,30 @@
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useState } from "react";
 import { useTranslation } from "react-i18next";
 import { History, Link2, SlidersHorizontal, X } from "lucide-react";
 import clsx from "clsx";
-import { qk } from "../../app/queryClient";
+import { qk, invalidateAfterStockChange } from "../../app/queryClient";
 import { Button } from "../../components/Button";
 import type { Lang } from "../../i18n";
+import type { ReasonCode } from "../../bindings/ReasonCode";
 import { api } from "../../lib/api";
+import { errorMessage } from "../../lib/errors";
 import { fmtAsOfDate, fmtCartonSplit, fmtKoli, fmtQty, fmtRupiah, fmtSigned } from "../../lib/format";
+import { newId } from "../../lib/uuid";
+import { useOperatorStore } from "../../stores/operatorStore";
+import { useNavigate } from "react-router";
 
 export function ProductDrawer({ productId, onClose }: { productId: number; onClose: () => void }) {
   const { t, i18n } = useTranslation();
   const lang = (i18n.language.slice(0, 2) as Lang) || "en";
+  const nav = useNavigate();
+  const qc = useQueryClient();
+  const operator = useOperatorStore((s) => s.operator);
+  const [adjustOpen, setAdjustOpen] = useState(false);
+  const [count, setCount] = useState("");
+  const [reason, setReason] = useState<ReasonCode>("COUNT_CORRECTION");
+  const [ack, setAck] = useState(false);
+  const [adjustErr, setAdjustErr] = useState<string | null>(null);
   const detail = useQuery({
     queryKey: qk.product(productId),
     queryFn: () => api.getProductDetail(productId),
@@ -22,7 +36,7 @@ export function ProductDrawer({ productId, onClose }: { productId: number; onClo
   return (
     <aside
       className={clsx(
-        "w-[440px] shrink-0 bg-surface border-l border-line flex flex-col min-h-0",
+        "w-[440px] shrink-0 bg-surface border-l border-line flex flex-col min-h-0 relative",
         "max-[1399px]:absolute max-[1399px]:inset-y-0 max-[1399px]:right-0 max-[1399px]:z-20 max-[1399px]:shadow-xl",
       )}
     >
@@ -112,11 +126,11 @@ export function ProductDrawer({ productId, onClose }: { productId: number; onClo
           <div className="flex-1" />
 
           <div className="px-6 py-4 border-t border-line flex gap-2">
-            <Button variant="ghost" disabled title={t("common.comingSoon")}>
+            <Button variant="ghost" onClick={() => { setAdjustOpen(true); setCount(String(row.currentQuantity)); setAck(false); setAdjustErr(null); }}>
               <SlidersHorizontal className="w-[18px] h-[18px]" strokeWidth={2} />
               {t("inventory.adjust")}
             </Button>
-            <Button variant="ghost" disabled title={t("common.comingSoon")}>
+            <Button variant="ghost" onClick={() => nav(`/settings/barcodes`)}>
               <Link2 className="w-[18px] h-[18px]" strokeWidth={2} />
               {t("inventory.barcodes")}
             </Button>
@@ -125,6 +139,60 @@ export function ProductDrawer({ productId, onClose }: { productId: number; onClo
               {t("inventory.history")}
             </Button>
           </div>
+          {adjustOpen ? (
+            <div className="absolute inset-0 bg-surface/95 p-6 flex flex-col gap-3 z-10">
+              <div className="text-lg font-semibold">{t("inventory.adjust")}</div>
+              <input
+                value={count}
+                onChange={(e) => setCount(e.target.value.replace(/\D/g, ""))}
+                className="h-11 px-3 border border-line rounded-[10px] font-mono text-xl"
+              />
+              <select value={reason} onChange={(e) => setReason(e.target.value as ReasonCode)} className="h-10 border border-line rounded-[10px] px-2">
+                <option value="COUNT_CORRECTION">{t("scan.reason.COUNT_CORRECTION")}</option>
+                <option value="DAMAGED">{t("scan.reason.DAMAGED")}</option>
+                <option value="DATA_MISMATCH">{t("scan.reason.DATA_MISMATCH")}</option>
+                <option value="OTHER">{t("scan.reason.OTHER")}</option>
+              </select>
+              {adjustErr ? <div className="text-sm text-neg">{adjustErr}</div> : null}
+              <div className="flex gap-2 mt-auto">
+                <Button variant="ghost" onClick={() => setAdjustOpen(false)}>{t("common.cancel")}</Button>
+                <Button
+                  disabled={!operator}
+                  onClick={async () => {
+                    if (!operator) return;
+                    try {
+                      await api.commitTransaction({
+                        clientTxnId: newId(),
+                        operatorId: operator.id,
+                        productId: row.productId,
+                        identifierCode: null,
+                        operation: "ADJUSTMENT",
+                        inputQuantity: Number(count || 0),
+                        inputUom: "COUNT",
+                        reasonCode: reason,
+                        returnDisposition: null,
+                        acknowledgeNegative: ack,
+                        source: "PRODUCT_PANEL",
+                        notes: null,
+                      });
+                      invalidateAfterStockChange(qc, row.productId);
+                      setAdjustOpen(false);
+                    } catch (e) {
+                      const err = e as { code?: string; details?: { stockBefore?: number; stockAfter?: number } };
+                      if (err.code === "NEEDS_ACK") {
+                        setAck(true);
+                        setAdjustErr(t("errors.NEEDS_ACK"));
+                      } else {
+                        setAdjustErr(errorMessage(e, t));
+                      }
+                    }
+                  }}
+                >
+                  {t("common.confirm")}
+                </Button>
+              </div>
+            </div>
+          ) : null}
         </>
       )}
     </aside>

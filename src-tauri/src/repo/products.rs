@@ -85,3 +85,32 @@ pub fn update_from_report(
     }
     Ok(())
 }
+
+pub struct ProductRecord {
+    pub id: i64,
+    pub name: String,
+    pub model_code: Option<String>,
+    pub pack_size: Option<i64>,
+    pub reference_price: Option<i64>,
+    pub is_active: bool,
+}
+
+pub fn get(conn: &Connection, id: i64) -> Result<Option<ProductRecord>, AppError> {
+    conn.query_row(
+        "SELECT id, name, model_code, pack_size, reference_price, is_active FROM products WHERE id = ?1",
+        [id],
+        |row| {
+            let active: i64 = row.get(5)?;
+            Ok(ProductRecord {
+                id: row.get(0)?,
+                name: row.get(1)?,
+                model_code: row.get(2)?,
+                pack_size: row.get(3)?,
+                reference_price: row.get(4)?,
+                is_active: active == 1,
+            })
+        },
+    )
+    .optional()
+    .map_err(AppError::from)
+}

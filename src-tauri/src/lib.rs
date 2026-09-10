@@ -74,6 +74,22 @@ pub fn run() {
             commands::count_open_exceptions,
             commands::dev_write_sample_report,
             commands::dev_seed_demo,
+            commands::resolve_barcode,
+            commands::get_product_card,
+            commands::commit_transaction,
+            commands::undo_last,
+            commands::get_current_session,
+            commands::finish_session,
+            commands::list_transactions,
+            commands::get_barcode_coverage,
+            commands::next_unlinked_product,
+            commands::check_barcode,
+            commands::link_barcode,
+            commands::deactivate_barcode,
+            commands::list_recent_links,
+            commands::export_barcode_template,
+            commands::preview_barcode_import,
+            commands::apply_barcode_import,
         ])
         .run(tauri::generate_context!())
         .expect("error while running StockScan");

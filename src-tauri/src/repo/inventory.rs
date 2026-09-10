@@ -1,6 +1,6 @@
 use std::collections::HashMap;
 
-use rusqlite::Connection;
+use rusqlite::{Connection, OptionalExtension};
 
 use crate::dto::{IdentifierDto, InventoryRow, ProductDetail};
 use crate::error::AppError;
@@ -102,7 +102,7 @@ fn list_identifiers(conn: &Connection, product_id: i64) -> Result<Vec<Identifier
         Ok(IdentifierDto {
             id: r.get(0)?,
             code: r.get(1)?,
-            identifier_type: r.get(2)?,
+            identifier_type: crate::dto::IdentifierType::from_db(&r.get::<_, String>(2)?),
             unit_multiplier: r.get(3)?,
         })
     })?;
@@ -165,4 +165,44 @@ pub fn count_open_exceptions(conn: &Connection) -> Result<i64, AppError> {
         |row| row.get(0),
     )?;
     Ok(n)
+}
+
+pub fn get_balance(
+    conn: &Connection,
+    location_id: i64,
+    product_id: i64,
+) -> Result<Option<(i64, i64, Option<String>)>, AppError> {
+    conn.query_row(
+        "
+        SELECT b.current_quantity, b.baseline_quantity,
+               (SELECT i.report_as_of_date FROM imports i WHERE i.id = b.baseline_import_id)
+          FROM inventory_balances b
+         WHERE b.location_id = ?1 AND b.product_id = ?2
+        ",
+        rusqlite::params![location_id, product_id],
+        |r| Ok((r.get(0)?, r.get(1)?, r.get(2)?)),
+    )
+    .optional()
+    .map_err(AppError::from)
+}
+
+pub fn set_current(
+    conn: &Connection,
+    location_id: i64,
+    product_id: i64,
+    new_qty: i64,
+    expected_old: i64,
+    now_iso: &str,
+) -> Result<(), AppError> {
+    let n = conn.execute(
+        "
+        UPDATE inventory_balances SET current_quantity = ?1, updated_at = ?2
+         WHERE location_id = ?3 AND product_id = ?4 AND current_quantity = ?5
+        ",
+        rusqlite::params![new_qty, now_iso, location_id, product_id, expected_old],
+    )?;
+    if n != 1 {
+        return Err(AppError::internal("balance changed concurrently"));
+    }
+    Ok(())
 }

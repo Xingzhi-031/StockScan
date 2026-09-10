@@ -13,6 +13,31 @@ pub enum OperationType {
     ReconciliationAdjustment,
 }
 
+impl OperationType {
+    pub fn as_db(self) -> &'static str {
+        match self {
+            Self::StockIn => "STOCK_IN",
+            Self::Sale => "SALE",
+            Self::Return => "RETURN",
+            Self::Adjustment => "ADJUSTMENT",
+            Self::Reversal => "REVERSAL",
+            Self::ReconciliationAdjustment => "RECONCILIATION_ADJUSTMENT",
+        }
+    }
+
+    pub fn from_db(s: &str) -> Result<Self, crate::error::AppError> {
+        match s {
+            "STOCK_IN" => Ok(Self::StockIn),
+            "SALE" => Ok(Self::Sale),
+            "RETURN" => Ok(Self::Return),
+            "ADJUSTMENT" => Ok(Self::Adjustment),
+            "REVERSAL" => Ok(Self::Reversal),
+            "RECONCILIATION_ADJUSTMENT" => Ok(Self::ReconciliationAdjustment),
+            _ => Err(crate::error::AppError::internal(format!("unknown operation {s}"))),
+        }
+    }
+}
+
 #[derive(Debug, Clone, Copy, Serialize, Deserialize, TS, PartialEq, Eq)]
 #[serde(rename_all = "SCREAMING_SNAKE_CASE")]
 #[ts(export)]
@@ -168,6 +193,133 @@ impl MatchStatus {
             _ => Self::New,
         }
     }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, TS, PartialEq, Eq)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[ts(export)]
+pub enum IdentifierType {
+    Ean13,
+    Ean8,
+    Upca,
+    Gtin14,
+    Code128,
+    Internal,
+    Other,
+}
+
+impl IdentifierType {
+    pub fn as_db(self) -> &'static str {
+        match self {
+            Self::Ean13 => "EAN13",
+            Self::Ean8 => "EAN8",
+            Self::Upca => "UPCA",
+            Self::Gtin14 => "GTIN14",
+            Self::Code128 => "CODE128",
+            Self::Internal => "INTERNAL",
+            Self::Other => "OTHER",
+        }
+    }
+
+    pub fn from_db(s: &str) -> Self {
+        match s {
+            "EAN13" => Self::Ean13,
+            "EAN8" => Self::Ean8,
+            "UPCA" => Self::Upca,
+            "GTIN14" => Self::Gtin14,
+            "CODE128" => Self::Code128,
+            "INTERNAL" => Self::Internal,
+            _ => Self::Other,
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, TS, PartialEq, Eq)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[ts(export)]
+pub enum InputUom {
+    Pcs,
+    Ctn,
+    Count,
+}
+
+impl InputUom {
+    pub fn as_db(self) -> &'static str {
+        match self {
+            Self::Pcs => "PCS",
+            Self::Ctn => "CTN",
+            Self::Count => "COUNT",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, TS, PartialEq, Eq)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[ts(export)]
+pub enum TxSource {
+    Scan,
+    ManualCode,
+    ProductPanel,
+}
+
+impl TxSource {
+    pub fn as_db(self) -> &'static str {
+        match self {
+            Self::Scan => "SCAN",
+            Self::ManualCode => "MANUAL_CODE",
+            Self::ProductPanel => "PRODUCT_PANEL",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, TS, PartialEq, Eq)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[ts(export)]
+pub enum ReasonCode {
+    CountCorrection,
+    Damaged,
+    DataMismatch,
+    Other,
+}
+
+impl ReasonCode {
+    pub fn as_db(self) -> &'static str {
+        match self {
+            Self::CountCorrection => "COUNT_CORRECTION",
+            Self::Damaged => "DAMAGED",
+            Self::DataMismatch => "DATA_MISMATCH",
+            Self::Other => "OTHER",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, TS, PartialEq, Eq)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[ts(export)]
+pub enum ReturnDisposition {
+    Sellable,
+    Damaged,
+    Quarantine,
+    Other,
+}
+
+impl ReturnDisposition {
+    pub fn as_db(self) -> &'static str {
+        match self {
+            Self::Sellable => "SELLABLE",
+            Self::Damaged => "DAMAGED",
+            Self::Quarantine => "QUARANTINE",
+            Self::Other => "OTHER",
+        }
+    }
+}
+
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, TS, PartialEq, Eq)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[ts(export)]
+pub enum BarcodeKind {
+    Unit,
+    Carton,
 }
 
 impl LocationType {

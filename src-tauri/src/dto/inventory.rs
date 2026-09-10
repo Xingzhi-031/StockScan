@@ -1,6 +1,8 @@
 use serde::{Deserialize, Serialize};
 use ts_rs::TS;
 
+use super::IdentifierType;
+
 #[derive(Debug, Clone, Serialize, Deserialize, TS, PartialEq)]
 #[serde(rename_all = "camelCase")]
 #[ts(export)]
@@ -34,7 +36,7 @@ pub struct IdentifierDto {
     #[ts(type = "number")]
     pub id: i64,
     pub code: String,
-    pub identifier_type: String,
+    pub identifier_type: IdentifierType,
     #[ts(type = "number")]
     pub unit_multiplier: i64,
 }
