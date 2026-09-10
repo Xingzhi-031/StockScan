@@ -1,0 +1,52 @@
+@import "tailwindcss";
+@import "@fontsource/ibm-plex-sans/400.css";
+@import "@fontsource/ibm-plex-sans/500.css";
+@import "@fontsource/ibm-plex-sans/600.css";
+@import "@fontsource/ibm-plex-sans/700.css";
+@import "@fontsource/ibm-plex-mono/400.css";
+@import "@fontsource/ibm-plex-mono/500.css";
+@import "@fontsource/ibm-plex-mono/600.css";
+
+@theme {
+  --font-sans: "IBM Plex Sans", "Microsoft YaHei", "Segoe UI", sans-serif;
+  --font-mono: "IBM Plex Mono", Consolas, monospace;
+
+  --color-bg: #F6F7F9;
+  --color-surface: #FFFFFF;
+  --color-ink: #171A1F;
+  --color-sub: #6F7682;
+  --color-faint: #9AA0AA;
+  --color-line: #E5E7EB;
+  --color-soft: #F1F2F4;
+  --color-hi: #F5F6FF;
+
+  --color-in: #047857;
+  --color-in-tint: #ECFDF5;
+  --color-in-line: #A7F3D0;
+  --color-sale: #4F46E5;
+  --color-sale-tint: #EEF0FF;
+  --color-sale-line: #C7CBFB;
+  --color-ret: #0E7490;
+  --color-ret-tint: #ECFEFF;
+  --color-ret-line: #A5E4EE;
+  --color-adj: #475569;
+  --color-adj-tint: #F1F5F9;
+  --color-adj-line: #CBD5E1;
+  --color-warn: #B45309;
+  --color-warn-tint: #FFFBEB;
+  --color-warn-line: #FCD34D;
+  --color-ok: #047857;
+  --color-ok-tint: #ECFDF5;
+  --color-neg: #C2410C;
+
+  --radius-card: 14px;
+  --radius-control: 10px;
+}
+
+body {
+  @apply bg-bg text-ink font-sans antialiased;
+}
+
+.num {
+  font-variant-numeric: tabular-nums;
+}

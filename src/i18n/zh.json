@@ -1,0 +1,113 @@
+{
+  "common": {
+    "confirm": "确认",
+    "cancel": "取消",
+    "pcs": "件",
+    "ctn": "箱",
+    "save": "保存",
+    "close": "关闭",
+    "offline": "离线",
+    "comingSoon": "将在后续里程碑实现",
+    "guest": "访客",
+    "continue": "继续"
+  },
+  "app": {
+    "tagline": "扫码库存工作台",
+    "invariantBanner": "数据检查失败（{{count}}）。请停止扫码并联系管理员。"
+  },
+  "nav": {
+    "scan": "扫描",
+    "inventory": "库存",
+    "history": "记录",
+    "data": "数据",
+    "warehouse": "仓库",
+    "exceptions": "异常",
+    "settings": "设置"
+  },
+  "dataNav": {
+    "import": "导入报表",
+    "reconcile": "对账",
+    "export": "导出",
+    "backup": "备份"
+  },
+  "mode": {
+    "STOCK_IN": { "label": "进货", "hint": "+ 数量", "secondary": "STOCK IN" },
+    "SALE": { "label": "售出", "hint": "− 数量", "secondary": "SALE" },
+    "RETURN": { "label": "退货", "hint": "+ 数量", "secondary": "RETURN" },
+    "ADJUSTMENT": { "label": "调整", "hint": "改成实盘", "secondary": "ADJUST" }
+  },
+  "scan": {
+    "scannerReady": "扫描器就绪",
+    "lastScan": "上次扫描",
+    "confirmOp": "确认{{op}}",
+    "waiting": "等待扫描",
+    "waitingHint": "用扫码枪对准条码。绑定和实时库存会在后续里程碑完成。",
+    "manual": "手动输入条码"
+  },
+  "operator": {
+    "title": "谁在操作？",
+    "subtitle": "选择你的名字。之后每一次扫描都会记在这个员工名下。",
+    "empty": "还没有员工。完成设置后可在设置里添加。",
+    "enterGuest": "以访客进入（开发）"
+  },
+  "setup": {
+    "title": "首次设置",
+    "subtitle": "先选择这台电脑的界面语言。公司、仓库和第一次导入会在后续里程碑完成。",
+    "language": "界面语言",
+    "enter": "进入 StockScan"
+  },
+  "inventory": {
+    "title": "库存",
+    "empty": "导入 ACCURATE 库存报表后，商品会出现在这里。"
+  },
+  "history": {
+    "title": "操作记录",
+    "empty": "第一次扫码后，流水会出现在这里。"
+  },
+  "data": {
+    "importTitle": "导入库存报表",
+    "reconcileTitle": "对账",
+    "exportTitle": "导出",
+    "backupTitle": "备份与恢复"
+  },
+  "barcodes": {
+    "title": "条码绑定",
+    "importTitle": "导入条码对应表"
+  },
+  "settings": {
+    "employeesTitle": "员工",
+    "preferencesTitle": "偏好设置",
+    "switchOperator": "切换员工"
+  },
+  "exceptions": {
+    "title": "异常",
+    "empty": "没有未处理的异常。"
+  },
+  "qty": {
+    "ctnOnly": "{{ctn}} 箱",
+    "ctnPcs": "{{ctn}} 箱 + {{pcs}} 件"
+  },
+  "errors": {
+    "GENERIC": "出错了，请再试一次。",
+    "INVALID_INPUT": "出错了，请再试一次。",
+    "INVALID_QUANTITY": "请输入有效数量。",
+    "QUANTITY_TOO_LARGE": "数量太大。",
+    "NO_CHANGE": "数量与系统一致，无需调整。",
+    "NEEDS_ACK": "账面库存不足。仍然继续？",
+    "PACK_SIZE_MISSING": "这个商品没有每箱件数（ISI）。请改按件输入。",
+    "CARTON_BARCODE_WITH_CTN": "这是箱码，数量已经按箱计算。",
+    "BARCODE_IN_USE": "这个条码已经属于 {{productName}}。",
+    "NOT_FOUND": "找不到这条记录。",
+    "OPERATOR_INACTIVE": "这名员工已停用。",
+    "SETUP_INCOMPLETE": "请先完成设置。",
+    "NOTHING_TO_UNDO": "当前操作批次没有可撤销的记录。",
+    "BASELINE_EXISTS": "库存已经导入。新报表请走对账。",
+    "IMPORT_ERROR": "无法读取这个文件。",
+    "RECONCILE_PENDING": "还有 {{pending}} 行需要决定。",
+    "PREVIEW_STALE": "数据已变化，请重新扫描。",
+    "BACKUP_ERROR": "备份失败。请检查备份文件夹。",
+    "DB_ERROR": "系统错误，请联系管理员。",
+    "IO_ERROR": "系统错误，请联系管理员。",
+    "INTERNAL": "系统错误，请联系管理员。"
+  }
+}

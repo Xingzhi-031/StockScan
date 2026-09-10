@@ -1,0 +1,113 @@
+{
+  "common": {
+    "confirm": "Confirm",
+    "cancel": "Cancel",
+    "pcs": "pcs",
+    "ctn": "ctn",
+    "save": "Save",
+    "close": "Close",
+    "offline": "Offline",
+    "comingSoon": "Coming in a later milestone",
+    "guest": "Guest",
+    "continue": "Continue"
+  },
+  "app": {
+    "tagline": "Scan inventory workstation",
+    "invariantBanner": "Data check failed ({{count}}). Do not keep scanning — contact admin."
+  },
+  "nav": {
+    "scan": "Scan",
+    "inventory": "Inventory",
+    "history": "History",
+    "data": "Data",
+    "warehouse": "Warehouse",
+    "exceptions": "Exceptions",
+    "settings": "Settings"
+  },
+  "dataNav": {
+    "import": "Import report",
+    "reconcile": "Reconcile",
+    "export": "Export",
+    "backup": "Backup"
+  },
+  "mode": {
+    "STOCK_IN": { "label": "STOCK IN", "hint": "+ qty", "secondary": "进货" },
+    "SALE": { "label": "SALE", "hint": "− qty", "secondary": "售出" },
+    "RETURN": { "label": "RETURN", "hint": "+ qty", "secondary": "退货" },
+    "ADJUSTMENT": { "label": "ADJUST", "hint": "set count", "secondary": "调整" }
+  },
+  "scan": {
+    "scannerReady": "Scanner ready",
+    "lastScan": "Last scan",
+    "confirmOp": "Confirm {{op}}",
+    "waiting": "Waiting for scan",
+    "waitingHint": "Point the scanner at a barcode. Binding and live stock land in later milestones.",
+    "manual": "Type barcode manually"
+  },
+  "operator": {
+    "title": "Who is scanning?",
+    "subtitle": "Pick your name. StockScan will record every scan under this employee.",
+    "empty": "No employees yet. Add them in Settings after setup.",
+    "enterGuest": "Enter as guest (dev)"
+  },
+  "setup": {
+    "title": "First-time setup",
+    "subtitle": "Choose the language for this computer. Company, warehouse and the first import come in later milestones.",
+    "language": "Interface language",
+    "enter": "Enter StockScan"
+  },
+  "inventory": {
+    "title": "Inventory",
+    "empty": "Import an ACCURATE stock report to see products here."
+  },
+  "history": {
+    "title": "History",
+    "empty": "Transactions will appear here after the first scan."
+  },
+  "data": {
+    "importTitle": "Import stock report",
+    "reconcileTitle": "Reconcile",
+    "exportTitle": "Export",
+    "backupTitle": "Backup & restore"
+  },
+  "barcodes": {
+    "title": "Barcode setup",
+    "importTitle": "Import barcode map"
+  },
+  "settings": {
+    "employeesTitle": "Employees",
+    "preferencesTitle": "Preferences",
+    "switchOperator": "Switch employee"
+  },
+  "exceptions": {
+    "title": "Exceptions",
+    "empty": "No open exceptions."
+  },
+  "qty": {
+    "ctnOnly": "{{ctn}} ctn",
+    "ctnPcs": "{{ctn}} ctn + {{pcs}} pcs"
+  },
+  "errors": {
+    "GENERIC": "Something went wrong. Please try again.",
+    "INVALID_INPUT": "Something went wrong. Please try again.",
+    "INVALID_QUANTITY": "Please enter a valid quantity.",
+    "QUANTITY_TOO_LARGE": "Quantity is too large.",
+    "NO_CHANGE": "Count matches the system. No adjustment needed.",
+    "NEEDS_ACK": "Not enough recorded stock. Continue anyway?",
+    "PACK_SIZE_MISSING": "This product has no pack size (ISI). Enter pieces instead.",
+    "CARTON_BARCODE_WITH_CTN": "This is a carton barcode. Quantity is already in cartons.",
+    "BARCODE_IN_USE": "This barcode already belongs to {{productName}}.",
+    "NOT_FOUND": "Record not found.",
+    "OPERATOR_INACTIVE": "This employee is no longer active.",
+    "SETUP_INCOMPLETE": "Please finish setup first.",
+    "NOTHING_TO_UNDO": "Nothing to undo in this session.",
+    "BASELINE_EXISTS": "Stock is already imported. Use Reconcile for a new report.",
+    "IMPORT_ERROR": "Could not read that file.",
+    "RECONCILE_PENDING": "{{pending}} lines still need a decision.",
+    "PREVIEW_STALE": "Data changed. Please scan again.",
+    "BACKUP_ERROR": "Backup failed. Check the backup folder.",
+    "DB_ERROR": "System error. Please contact the admin.",
+    "IO_ERROR": "System error. Please contact the admin.",
+    "INTERNAL": "System error. Please contact the admin."
+  }
+}

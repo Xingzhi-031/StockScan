@@ -1,0 +1,113 @@
+{
+  "common": {
+    "confirm": "Konfirmasi",
+    "cancel": "Batal",
+    "pcs": "pcs",
+    "ctn": "koli",
+    "save": "Simpan",
+    "close": "Tutup",
+    "offline": "Offline",
+    "comingSoon": "Akan ada di tahap berikutnya",
+    "guest": "Tamu",
+    "continue": "Lanjut"
+  },
+  "app": {
+    "tagline": "Stasiun kerja stok scan",
+    "invariantBanner": "Pemeriksaan data gagal ({{count}}). Jangan lanjut scan — hubungi admin."
+  },
+  "nav": {
+    "scan": "Scan",
+    "inventory": "Stok",
+    "history": "Riwayat",
+    "data": "Data",
+    "warehouse": "Gudang",
+    "exceptions": "Perlu dicek",
+    "settings": "Pengaturan"
+  },
+  "dataNav": {
+    "import": "Impor laporan",
+    "reconcile": "Cocokkan",
+    "export": "Ekspor",
+    "backup": "Cadangan"
+  },
+  "mode": {
+    "STOCK_IN": { "label": "MASUK", "hint": "+ qty", "secondary": "STOCK IN" },
+    "SALE": { "label": "JUAL", "hint": "− qty", "secondary": "SALE" },
+    "RETURN": { "label": "RETUR", "hint": "+ qty", "secondary": "RETURN" },
+    "ADJUSTMENT": { "label": "KOREKSI", "hint": "set count", "secondary": "ADJUST" }
+  },
+  "scan": {
+    "scannerReady": "Scanner siap",
+    "lastScan": "Scan terakhir",
+    "confirmOp": "Konfirmasi {{op}}",
+    "waiting": "Menunggu scan",
+    "waitingHint": "Arahkan scanner ke barcode. Binding dan stok live menyusul di tahap berikutnya.",
+    "manual": "Ketik barcode manual"
+  },
+  "operator": {
+    "title": "Siapa yang scan?",
+    "subtitle": "Pilih nama Anda. Setiap scan akan tercatat atas nama karyawan ini.",
+    "empty": "Belum ada karyawan. Tambahkan di Pengaturan setelah setup.",
+    "enterGuest": "Masuk sebagai tamu (dev)"
+  },
+  "setup": {
+    "title": "Setup pertama",
+    "subtitle": "Pilih bahasa untuk komputer ini. Perusahaan, gudang, dan impor pertama menyusul di tahap berikutnya.",
+    "language": "Bahasa tampilan",
+    "enter": "Masuk ke StockScan"
+  },
+  "inventory": {
+    "title": "Stok",
+    "empty": "Impor laporan stok ACCURATE untuk melihat barang di sini."
+  },
+  "history": {
+    "title": "Riwayat",
+    "empty": "Transaksi akan muncul di sini setelah scan pertama."
+  },
+  "data": {
+    "importTitle": "Impor laporan stok",
+    "reconcileTitle": "Cocokkan",
+    "exportTitle": "Ekspor",
+    "backupTitle": "Cadangan & pulihkan"
+  },
+  "barcodes": {
+    "title": "Setup barcode",
+    "importTitle": "Impor peta barcode"
+  },
+  "settings": {
+    "employeesTitle": "Karyawan",
+    "preferencesTitle": "Preferensi",
+    "switchOperator": "Ganti karyawan"
+  },
+  "exceptions": {
+    "title": "Perlu dicek",
+    "empty": "Tidak ada yang perlu dicek."
+  },
+  "qty": {
+    "ctnOnly": "{{ctn}} koli",
+    "ctnPcs": "{{ctn}} koli + {{pcs}} pcs"
+  },
+  "errors": {
+    "GENERIC": "Terjadi kesalahan. Coba lagi.",
+    "INVALID_INPUT": "Terjadi kesalahan. Coba lagi.",
+    "INVALID_QUANTITY": "Masukkan jumlah yang valid.",
+    "QUANTITY_TOO_LARGE": "Jumlah terlalu besar.",
+    "NO_CHANGE": "Jumlah sama dengan sistem. Tidak perlu koreksi.",
+    "NEEDS_ACK": "Stok tercatat tidak cukup. Lanjut anyway?",
+    "PACK_SIZE_MISSING": "Barang ini tidak punya isi per koli (ISI). Masukkan pcs.",
+    "CARTON_BARCODE_WITH_CTN": "Ini barcode koli. Jumlah sudah dalam koli.",
+    "BARCODE_IN_USE": "Barcode ini sudah milik {{productName}}.",
+    "NOT_FOUND": "Data tidak ditemukan.",
+    "OPERATOR_INACTIVE": "Karyawan ini sudah nonaktif.",
+    "SETUP_INCOMPLETE": "Selesaikan setup terlebih dahulu.",
+    "NOTHING_TO_UNDO": "Tidak ada yang bisa dibatalkan di sesi ini.",
+    "BASELINE_EXISTS": "Stok sudah diimpor. Gunakan Cocokkan untuk laporan baru.",
+    "IMPORT_ERROR": "File tidak bisa dibaca.",
+    "RECONCILE_PENDING": "{{pending}} baris masih perlu keputusan.",
+    "PREVIEW_STALE": "Data berubah. Scan ulang.",
+    "BACKUP_ERROR": "Cadangan gagal. Periksa folder cadangan.",
+    "DB_ERROR": "Kesalahan sistem. Hubungi admin.",
+    "IO_ERROR": "Kesalahan sistem. Hubungi admin.",
+    "INTERNAL": "Kesalahan sistem. Hubungi admin."
+  }
+}
