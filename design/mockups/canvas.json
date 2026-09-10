@@ -1,0 +1,222 @@
+{
+  "pages": [
+    {
+      "id": "page-1",
+      "name": "Daily scanning"
+    },
+    {
+      "id": "page-2",
+      "name": "Inventory & history"
+    },
+    {
+      "id": "page-3",
+      "name": "Data & setup"
+    },
+    {
+      "id": "page-4",
+      "name": "Bahasa Indonesia"
+    }
+  ],
+  "artboards": [
+    {
+      "file": "Operator.dc.html",
+      "title": "1 · Select operator",
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "page": "page-1"
+    },
+    {
+      "file": "Main.dc.html",
+      "title": "2 · Scan — Sale with quantity",
+      "x": 1560,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "page": "page-1"
+    },
+    {
+      "file": "UnknownBarcode.dc.html",
+      "title": "3 · Unknown barcode",
+      "x": 0,
+      "y": 1080,
+      "w": 1440,
+      "h": 900,
+      "page": "page-1"
+    },
+    {
+      "file": "NegativeStock.dc.html",
+      "title": "4 · Not enough recorded stock",
+      "x": 1560,
+      "y": 1080,
+      "w": 1440,
+      "h": 900,
+      "page": "page-1"
+    },
+    {
+      "file": "Inventory.dc.html",
+      "title": "5 · Inventory + product panel",
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "page": "page-2"
+    },
+    {
+      "file": "History.dc.html",
+      "title": "6 · History (undo = reversal)",
+      "x": 1560,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "page": "page-2"
+    },
+    {
+      "file": "ImportReport.dc.html",
+      "title": "7 · Import ACCURATE report",
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "page": "page-3"
+    },
+    {
+      "file": "BarcodeSetup.dc.html",
+      "title": "8 · Barcode setup",
+      "x": 1560,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "page": "page-3"
+    },
+    {
+      "file": "Reconcile.dc.html",
+      "title": "9 · Reconcile new snapshot",
+      "x": 0,
+      "y": 1080,
+      "w": 1440,
+      "h": 900,
+      "page": "page-3"
+    },
+    {
+      "file": "OperatorID.dc.html",
+      "title": "1 · Pilih operator",
+      "x": 0,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "page": "page-4"
+    },
+    {
+      "file": "MainID.dc.html",
+      "title": "2 · Scan — Jual dengan jumlah",
+      "x": 1560,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "page": "page-4"
+    },
+    {
+      "file": "UnknownBarcodeID.dc.html",
+      "title": "3 · Barcode tidak ditemukan",
+      "x": 3120,
+      "y": 0,
+      "w": 1440,
+      "h": 900,
+      "page": "page-4"
+    },
+    {
+      "file": "NegativeStockID.dc.html",
+      "title": "4 · Stok tercatat tidak cukup",
+      "x": 0,
+      "y": 1080,
+      "w": 1440,
+      "h": 900,
+      "page": "page-4"
+    },
+    {
+      "file": "InventoryID.dc.html",
+      "title": "5 · Stok + panel produk",
+      "x": 1560,
+      "y": 1080,
+      "w": 1440,
+      "h": 900,
+      "page": "page-4"
+    },
+    {
+      "file": "HistoryID.dc.html",
+      "title": "6 · Riwayat (batal = pembatalan)",
+      "x": 3120,
+      "y": 1080,
+      "w": 1440,
+      "h": 900,
+      "page": "page-4"
+    },
+    {
+      "file": "ImportReportID.dc.html",
+      "title": "7 · Impor laporan ACCURATE",
+      "x": 0,
+      "y": 2160,
+      "w": 1440,
+      "h": 900,
+      "page": "page-4"
+    },
+    {
+      "file": "BarcodeSetupID.dc.html",
+      "title": "8 · Pengaturan barcode",
+      "x": 1560,
+      "y": 2160,
+      "w": 1440,
+      "h": 900,
+      "page": "page-4"
+    },
+    {
+      "file": "ReconcileID.dc.html",
+      "title": "9 · Cocokkan laporan baru",
+      "x": 3120,
+      "y": 2160,
+      "w": 1440,
+      "h": 900,
+      "page": "page-4"
+    }
+  ],
+  "annotations": [
+    {
+      "id": "review-scan",
+      "x": 0,
+      "y": -520,
+      "w": 1100,
+      "page": "page-1",
+      "text": "StockScan · client review 1/3 — daily scanning\n\nFlow: pick your name → choose the mode once (F1–F4) → scan → type pieces or cartons → Enter.\n\nPlease confirm:\n• Are STOCK IN / SALE / RETURN / ADJUST the four actions your staff need?\n• Do staff count in cartons (ISI)? If never, the CTN switch is hidden.\n• Selling more than the recorded stock is allowed with a warning and flagged for the admin. OK?\n• StockScan will ship in English, 中文 and Bahasa Indonesia. Please check the Bahasa Indonesia page and tell us if any wording feels unnatural.\n\nFigures for CK-EM296, CK-EM196 and SM-K805 come from the EMERGENCY report. Other products, barcodes, names and counts are sample data."
+    },
+    {
+      "id": "review-inventory",
+      "x": 0,
+      "y": -420,
+      "w": 1100,
+      "page": "page-2",
+      "text": "StockScan · client review 2/3 — inventory & history\n\n• Current stock = ACCURATE baseline + StockScan live change, so anyone can see why StockScan differs from ACCURATE.\n• Undo never deletes. It adds a reversal line (see Amy, 14:13 in History).\n\nPlease confirm: which columns do you need in the stock export and the transaction export?"
+    },
+    {
+      "id": "review-data",
+      "x": 0,
+      "y": -520,
+      "w": 1100,
+      "page": "page-3",
+      "text": "StockScan · client review 3/3 — data & setup\n\nPlease confirm:\n• ISI = pieces per carton? KOLI = stock ÷ ISI? Which price is HARGA (selling, purchase, other)?\n• Can ACCURATE export a barcode ↔ product list? If not, staff link each barcode once in Barcode Setup.\n• Do cartons carry their own barcode (one scan = a full carton)?\n• When you export a new report from ACCURATE, does it already include the StockScan changes you entered?\n• Is there a fixed Excel/CSV template for entering StockScan data back into ACCURATE?\n• Should damaged returns go to Gudang Rusak instead of sellable stock?"
+    },
+    {
+      "id": "review-id",
+      "x": 0,
+      "y": -440,
+      "w": 1100,
+      "page": "page-4",
+      "text": "Versi Bahasa Indonesia · Indonesian version\n\nIstilah: MASUK / JUAL / RETUR / KOREKSI untuk mode, PCS / KOLI untuk satuan, format angka Indonesia (1.284 · 0,46).\nMohon satu staf gudang mengecek apakah istilahnya sudah wajar.\n\nTerms: MASUK / JUAL / RETUR / KOREKSI for the modes, PCS / KOLI for units, Indonesian number format. Please ask a warehouse staff member whether the wording feels natural."
+    }
+  ],
+  "launch": {
+    "view": "canvas",
+    "page": "page-4"
+  }
+}
