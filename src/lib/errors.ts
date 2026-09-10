@@ -38,3 +38,19 @@ export function toAppError(e: unknown): AppError {
   }
   return { code: "INTERNAL", message: "Unknown error" };
 }
+
+type Translate = (key: string, vars?: Record<string, unknown>) => string;
+
+export function errorMessage(e: unknown, t: Translate): string {
+  const err = toAppError(e);
+  const reason = typeof err.details?.reason === "string" ? err.details.reason : "";
+  if (reason) {
+    const key = `errors.${reason}`;
+    const translated = t(key, err.details);
+    if (translated !== key) return translated;
+  }
+  const codeKey = `errors.${err.code}`;
+  const translated = t(codeKey, err.details);
+  if (translated !== codeKey) return translated;
+  return t("errors.GENERIC");
+}

@@ -63,6 +63,51 @@ impl Default for ScannerSuffix {
     }
 }
 
+#[derive(Debug, Clone, Copy, Serialize, Deserialize, TS, PartialEq, Eq)]
+#[serde(rename_all = "SCREAMING_SNAKE_CASE")]
+#[ts(export)]
+pub enum Role {
+    Operator,
+    Admin,
+}
+
+impl Role {
+    pub fn as_db(self) -> &'static str {
+        match self {
+            Self::Operator => "OPERATOR",
+            Self::Admin => "ADMIN",
+        }
+    }
+
+    pub fn from_db(s: &str) -> Result<Self, crate::error::AppError> {
+        match s {
+            "OPERATOR" => Ok(Self::Operator),
+            "ADMIN" => Ok(Self::Admin),
+            _ => Err(crate::error::AppError::internal(format!("unknown role {s}"))),
+        }
+    }
+}
+
+impl LocationType {
+    pub fn as_db(self) -> &'static str {
+        match self {
+            Self::Warehouse => "WAREHOUSE",
+            Self::Online => "ONLINE",
+            Self::Damaged => "DAMAGED",
+            Self::Other => "OTHER",
+        }
+    }
+
+    pub fn from_db(s: &str) -> Self {
+        match s {
+            "WAREHOUSE" => Self::Warehouse,
+            "ONLINE" => Self::Online,
+            "DAMAGED" => Self::Damaged,
+            _ => Self::Other,
+        }
+    }
+}
+
 #[derive(Debug, Clone, Serialize, Deserialize, TS, PartialEq, Eq)]
 #[serde(rename_all = "camelCase")]
 #[ts(export)]

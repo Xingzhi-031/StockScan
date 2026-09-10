@@ -154,3 +154,42 @@ impl Default for ImportSettings {
         }
     }
 }
+
+/// Partial update for `update_settings`. Omitted fields stay as they are.
+#[derive(Debug, Clone, Default, Serialize, Deserialize, TS, PartialEq)]
+#[serde(rename_all = "camelCase", default)]
+#[ts(export)]
+pub struct SettingsPatch {
+    #[ts(optional)]
+    pub language: Option<Language>,
+    #[ts(optional)]
+    pub scanner: Option<ScannerSettings>,
+    #[ts(optional)]
+    pub scan: Option<ScanSettings>,
+    #[ts(optional)]
+    pub session: Option<SessionSettingsPatch>,
+    #[ts(optional)]
+    pub sound: Option<SoundSettings>,
+    #[ts(optional)]
+    pub backup: Option<BackupSettingsPatch>,
+    #[ts(optional)]
+    pub import: Option<ImportSettings>,
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize, TS, PartialEq)]
+#[serde(rename_all = "camelCase", default)]
+#[ts(export)]
+pub struct SessionSettingsPatch {
+    #[ts(optional, type = "number")]
+    pub idle_minutes: Option<i64>,
+}
+
+#[derive(Debug, Clone, Default, Serialize, Deserialize, TS, PartialEq)]
+#[serde(rename_all = "camelCase", default)]
+#[ts(export)]
+pub struct BackupSettingsPatch {
+    #[ts(optional)]
+    pub secondary_dir: Option<String>,
+    #[ts(optional, type = "number")]
+    pub stale_warning_days: Option<i64>,
+}

@@ -1,5 +1,5 @@
 import { Navigate, Route, Routes } from "react-router";
-import { RequireShell, RootRedirect } from "./guards";
+import { RequireOperatorSelect, RequireSetup, RequireShell, RootRedirect } from "./guards";
 import { AppShell, BareLayout } from "./layouts";
 import { SetupWizard } from "../features/setup/SetupWizard";
 import { OperatorSelectPage } from "../features/operator/OperatorSelectPage";
@@ -15,13 +15,18 @@ import { BarcodeSetupPage } from "../features/barcodes/BarcodeSetupPage";
 import { BarcodeImportPage } from "../features/barcodes/BarcodeImportPage";
 import { EmployeesPage } from "../features/settings/EmployeesPage";
 import { PreferencesPage } from "../features/settings/PreferencesPage";
+import { SettingsLayout } from "../features/settings/SettingsNav";
 
 export function AppRoutes() {
   return (
     <Routes>
       <Route element={<BareLayout />}>
-        <Route path="/setup" element={<SetupWizard />} />
-        <Route path="/operator" element={<OperatorSelectPage />} />
+        <Route element={<RequireSetup />}>
+          <Route path="/setup" element={<SetupWizard />} />
+        </Route>
+        <Route element={<RequireOperatorSelect />}>
+          <Route path="/operator" element={<OperatorSelectPage />} />
+        </Route>
       </Route>
 
       <Route element={<RequireShell />}>
@@ -36,10 +41,13 @@ export function AppRoutes() {
             <Route path="export" element={<ExportPages />} />
             <Route path="backup" element={<BackupPage />} />
           </Route>
-          <Route path="/settings/barcodes" element={<BarcodeSetupPage />} />
-          <Route path="/settings/barcodes/import" element={<BarcodeImportPage />} />
-          <Route path="/settings/employees" element={<EmployeesPage />} />
-          <Route path="/settings/preferences" element={<PreferencesPage />} />
+          <Route path="/settings" element={<SettingsLayout />}>
+            <Route index element={<Navigate to="employees" replace />} />
+            <Route path="barcodes" element={<BarcodeSetupPage />} />
+            <Route path="barcodes/import" element={<BarcodeImportPage />} />
+            <Route path="employees" element={<EmployeesPage />} />
+            <Route path="preferences" element={<PreferencesPage />} />
+          </Route>
         </Route>
       </Route>
 

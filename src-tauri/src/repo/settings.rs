@@ -106,3 +106,48 @@ pub fn load_settings(conn: &Connection) -> Result<Settings, AppError> {
     }
     Ok(s)
 }
+
+pub fn save_settings(conn: &Connection, s: &Settings, now_iso: &str) -> Result<(), AppError> {
+    set_json(conn, "company_id", &s.company_id, now_iso)?;
+    set_json(conn, "active_location_id", &s.active_location_id, now_iso)?;
+    set_json(conn, "language", &s.language, now_iso)?;
+    set_json(conn, "setup_completed_at", &s.setup_completed_at, now_iso)?;
+    set_json(conn, "scanner.max_gap_ms", &s.scanner.max_gap_ms, now_iso)?;
+    set_json(conn, "scanner.min_length", &s.scanner.min_length, now_iso)?;
+    set_json(conn, "scanner.idle_flush_ms", &s.scanner.idle_flush_ms, now_iso)?;
+    set_json(conn, "scanner.suffix", &s.scanner.suffix, now_iso)?;
+    set_json(conn, "scanner.dedup_ms", &s.scanner.dedup_ms, now_iso)?;
+    set_json(conn, "scan.quick_scan_enabled", &s.scan.quick_scan_enabled, now_iso)?;
+    set_json(conn, "scan.fkeys_enabled", &s.scan.fkeys_enabled, now_iso)?;
+    set_json(
+        conn,
+        "scan.auto_commit_on_next_scan",
+        &s.scan.auto_commit_on_next_scan,
+        now_iso,
+    )?;
+    set_json(conn, "scan.secondary_language", &s.scan.secondary_language, now_iso)?;
+    set_json(conn, "session.idle_minutes", &s.session.idle_minutes, now_iso)?;
+    set_json(conn, "session.next_number", &s.session.next_number, now_iso)?;
+    set_json(conn, "sound.enabled", &s.sound.enabled, now_iso)?;
+    set_json(conn, "backup.secondary_dir", &s.backup.secondary_dir, now_iso)?;
+    set_json(conn, "backup.last_success_at", &s.backup.last_success_at, now_iso)?;
+    set_json(
+        conn,
+        "backup.last_secondary_success_at",
+        &s.backup.last_secondary_success_at,
+        now_iso,
+    )?;
+    set_json(
+        conn,
+        "backup.stale_warning_days",
+        &s.backup.stale_warning_days,
+        now_iso,
+    )?;
+    set_json(
+        conn,
+        "import.missing_rows_mean_zero",
+        &s.import.missing_rows_mean_zero,
+        now_iso,
+    )?;
+    Ok(())
+}

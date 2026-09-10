@@ -46,15 +46,30 @@
   },
   "operator": {
     "title": "Siapa yang scan?",
-    "subtitle": "Pilih nama Anda. Setiap scan akan tercatat atas nama karyawan ini.",
+    "headline": "Siapa yang scan hari ini?",
+    "subtitle": "Pilih nama Anda untuk mulai",
+    "search": "Cari nama atau ID karyawan",
     "empty": "Belum ada karyawan. Tambahkan di Pengaturan setelah setup.",
-    "enterGuest": "Masuk sebagai tamu (dev)"
+    "lastUsed": "Terakhir dipakai",
+    "move": "pindah",
+    "start": "mulai · tanpa kata sandi",
+    "offlineHint": "Bisa offline · Data di komputer ini · {{backup}}",
+    "backupToday": "Cadangan hari ini",
+    "backupTodayAt": "Cadangan hari ini {{time}}",
+    "backupAt": "Cadangan terakhir {{datetime}}",
+    "noBackup": "Belum ada cadangan"
   },
   "setup": {
     "title": "Setup pertama",
-    "subtitle": "Pilih bahasa untuk komputer ini. Perusahaan, gudang, dan impor pertama menyusul di tahap berikutnya.",
+    "subtitle": "Pilih bahasa, perusahaan, gudang, dan admin pertama untuk komputer ini.",
     "language": "Bahasa tampilan",
-    "enter": "Masuk ke StockScan"
+    "company": "Perusahaan",
+    "locationCode": "Kode gudang",
+    "locationName": "Nama gudang",
+    "adminCode": "ID admin",
+    "adminName": "Nama admin",
+    "enter": "Masuk ke StockScan",
+    "loadDemo": "Muat data demo (dev)"
   },
   "inventory": {
     "title": "Stok",
@@ -78,6 +93,33 @@
     "employeesTitle": "Karyawan",
     "preferencesTitle": "Preferensi",
     "switchOperator": "Ganti karyawan"
+  },
+  "employees": {
+    "hint": "Karyawan bisa dinonaktifkan. Riwayat tetap atas nama mereka.",
+    "code": "ID",
+    "name": "Nama",
+    "role": "Peran",
+    "roleOperator": "Operator",
+    "roleAdmin": "Admin",
+    "status": "Status",
+    "active": "Aktif",
+    "inactive": "Nonaktif",
+    "add": "Tambah karyawan",
+    "edit": "Ubah",
+    "deactivate": "Nonaktifkan",
+    "activate": "Aktifkan",
+    "empty": "Belum ada karyawan.",
+    "adminOnly": "Hanya admin yang bisa menambah atau mengubah karyawan."
+  },
+  "preferences": {
+    "hint": "Pengaturan ini tersimpan di komputer ini.",
+    "language": "Bahasa",
+    "sound": "Suara",
+    "soundHint": "Bunyi setelah scan. Audio dibuka saat memilih karyawan.",
+    "fkeys": "Tombol mode F1–F4",
+    "fkeysHint": "Matikan jika scanner mengirim tombol fungsi tanpa sengaja.",
+    "idleMinutes": "Sesi idle (menit)",
+    "idleHint": "Setelah menit ini tanpa scan, scan berikutnya membuka sesi baru."
   },
   "exceptions": {
     "title": "Perlu dicek",
@@ -108,6 +150,15 @@
     "BACKUP_ERROR": "Cadangan gagal. Periksa folder cadangan.",
     "DB_ERROR": "Kesalahan sistem. Hubungi admin.",
     "IO_ERROR": "Kesalahan sistem. Hubungi admin.",
-    "INTERNAL": "Kesalahan sistem. Hubungi admin."
+    "INTERNAL": "Kesalahan sistem. Hubungi admin.",
+    "EMPLOYEE_CODE_IN_USE": "ID karyawan ini sudah dipakai.",
+    "EMPLOYEE_CODE_INVALID": "ID karyawan harus 1–16 huruf atau angka.",
+    "EMPLOYEE_NAME_INVALID": "Masukkan nama (maks. 80 karakter).",
+    "LAST_ACTIVE_EMPLOYEE": "Sisakan minimal satu karyawan aktif.",
+    "LAST_ADMIN": "Sisakan minimal satu admin aktif.",
+    "SETUP_ALREADY_DONE": "Setup di komputer ini sudah selesai.",
+    "COMPANY_NAME_INVALID": "Masukkan nama perusahaan.",
+    "WAREHOUSE_INVALID": "Masukkan kode dan nama gudang.",
+    "SETTINGS_RANGE": "Pengaturan di luar rentang."
   }
 }

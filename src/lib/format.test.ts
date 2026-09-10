@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { fmtCartonSplit, fmtQty, fmtSigned } from "./format";
+import { fmtBackupPhrase, fmtCartonSplit, fmtQty, fmtSigned } from "./format";
 
 describe("fmtQty", () => {
   it("uses a minus sign and locale grouping", () => {
@@ -31,5 +31,28 @@ describe("fmtCartonSplit", () => {
   it("splits cartons and leftover pieces", () => {
     expect(fmtCartonSplit(1142, 100, t)).toBe("11 ctn + 42 pcs");
     expect(fmtCartonSplit(200, 100, t)).toBe("2 ctn");
+  });
+});
+
+describe("fmtBackupPhrase", () => {
+  const t = (key: string, vars?: Record<string, unknown>) => {
+    if (key === "operator.noBackup") return "none";
+    if (key === "operator.backupTodayAt") return `today ${vars?.time}`;
+    if (key === "operator.backupAt") return `at ${vars?.datetime}`;
+    return key;
+  };
+
+  it("says none when there is no backup", () => {
+    expect(fmtBackupPhrase(null, new Date("2026-09-10T10:00:00.000Z"), "en", t)).toBe("none");
+  });
+
+  it("uses today when the backup is the same Jakarta day", () => {
+    const phrase = fmtBackupPhrase(
+      "2026-09-10T01:02:00.000Z",
+      new Date("2026-09-10T10:00:00.000Z"),
+      "en",
+      t,
+    );
+    expect(phrase.startsWith("today ")).toBe(true);
   });
 });

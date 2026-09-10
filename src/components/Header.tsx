@@ -2,7 +2,7 @@ import { Barcode, ChevronDown, Settings, TriangleAlert, Warehouse } from "lucide
 import { useTranslation } from "react-i18next";
 import { NavLink, useLocation, useNavigate } from "react-router";
 import clsx from "clsx";
-import type { Lang } from "../i18n";
+import { LanguageSwitcher } from "./LanguageSwitcher";
 import { useOperatorStore } from "../stores/operatorStore";
 import type { StartupState } from "../bindings/StartupState";
 
@@ -14,11 +14,11 @@ const NAV = [
 ] as const;
 
 export function Header({ startup }: { startup: StartupState | undefined }) {
-  const { t, i18n } = useTranslation();
+  const { t } = useTranslation();
   const navigate = useNavigate();
   const location = useLocation();
   const operator = useOperatorStore((s) => s.operator);
-  const lang = i18n.language as Lang;
+  const setOperator = useOperatorStore((s) => s.setOperator);
   const initials = operator
     ? operator.name
         .split(/\s+/)
@@ -81,7 +81,10 @@ export function Header({ startup }: { startup: StartupState | undefined }) {
 
         <button
           type="button"
-          onClick={() => navigate("/operator")}
+          onClick={() => {
+            setOperator(null);
+            navigate("/operator");
+          }}
           className="flex items-center gap-2 h-9 pl-1.5 pr-2.5 border border-line rounded-lg text-[13px]"
         >
           <span className="w-[26px] h-[26px] rounded-full bg-ink text-white text-[11px] font-semibold flex items-center justify-center">
@@ -94,25 +97,11 @@ export function Header({ startup }: { startup: StartupState | undefined }) {
           <ChevronDown className="w-3.5 h-3.5 text-sub" />
         </button>
 
-        <div className="flex p-[3px] rounded-lg bg-soft text-xs font-semibold">
-          {(["en", "zh", "id"] as const).map((code) => (
-            <button
-              key={code}
-              type="button"
-              onClick={() => void i18n.changeLanguage(code)}
-              className={clsx(
-                "px-2.5 py-[5px] rounded-md",
-                lang.startsWith(code) ? "bg-surface shadow-sm text-ink" : "text-sub",
-              )}
-            >
-              {code === "zh" ? "中文" : code.toUpperCase()}
-            </button>
-          ))}
-        </div>
+        <LanguageSwitcher />
 
         <button
           type="button"
-          onClick={() => navigate("/settings/preferences")}
+          onClick={() => navigate("/settings/employees")}
           className="w-9 h-9 rounded-lg border border-line flex items-center justify-center"
           aria-label={t("nav.settings")}
         >

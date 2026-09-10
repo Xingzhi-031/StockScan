@@ -1,5 +1,6 @@
 mod commands;
 mod db;
+mod dev_seed;
 pub mod dto;
 mod error;
 mod repo;
@@ -57,6 +58,13 @@ pub fn run() {
         .invoke_handler(tauri::generate_handler![
             commands::get_startup_state,
             commands::get_settings,
+            commands::update_settings,
+            commands::complete_setup,
+            commands::list_employees,
+            commands::upsert_employee,
+            commands::set_employee_active,
+            commands::select_operator,
+            commands::dev_seed_demo,
         ])
         .run(tauri::generate_context!())
         .expect("error while running StockScan");

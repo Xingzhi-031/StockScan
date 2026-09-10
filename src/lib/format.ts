@@ -44,3 +44,26 @@ export const fmtDateTime = (iso: string, lang: Lang) =>
     timeStyle: "short",
     hour12: false,
   }).format(new Date(iso));
+
+function jakartaDay(d: Date): string {
+  return new Intl.DateTimeFormat("en-CA", {
+    timeZone: TZ,
+    year: "numeric",
+    month: "2-digit",
+    day: "2-digit",
+  }).format(d);
+}
+
+export function fmtBackupPhrase(iso: string | null, now: Date, lang: Lang, t: Translate): string {
+  if (!iso) return t("operator.noBackup");
+  const then = new Date(iso);
+  if (Number.isNaN(then.getTime())) return t("operator.noBackup");
+  const time = new Intl.DateTimeFormat(LOCALE[lang], {
+    timeZone: TZ,
+    hour: "2-digit",
+    minute: "2-digit",
+    hour12: false,
+  }).format(then);
+  if (jakartaDay(then) === jakartaDay(now)) return t("operator.backupTodayAt", { time });
+  return t("operator.backupAt", { datetime: fmtDateTime(iso, lang) });
+}

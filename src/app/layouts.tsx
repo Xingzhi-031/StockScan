@@ -10,7 +10,9 @@ export function BareLayout() {
   useAppShortcuts();
   return (
     <div className="h-screen flex flex-col bg-bg">
-      <Outlet />
+      <div className="flex-1 min-h-0 flex flex-col">
+        <Outlet />
+      </div>
     </div>
   );
 }

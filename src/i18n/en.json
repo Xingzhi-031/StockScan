@@ -46,15 +46,30 @@
   },
   "operator": {
     "title": "Who is scanning?",
-    "subtitle": "Pick your name. StockScan will record every scan under this employee.",
+    "headline": "Who is scanning today?",
+    "subtitle": "选择操作员工 · Pick your name to start",
+    "search": "Search name or employee ID",
     "empty": "No employees yet. Add them in Settings after setup.",
-    "enterGuest": "Enter as guest (dev)"
+    "lastUsed": "Last used",
+    "move": "move",
+    "start": "start · no password needed",
+    "offlineHint": "Works offline · Data is stored on this computer · {{backup}}",
+    "backupToday": "Last backup today",
+    "backupTodayAt": "Last backup today {{time}}",
+    "backupAt": "Last backup {{datetime}}",
+    "noBackup": "No backup yet"
   },
   "setup": {
     "title": "First-time setup",
-    "subtitle": "Choose the language for this computer. Company, warehouse and the first import come in later milestones.",
+    "subtitle": "Choose the language, company, warehouse and the first admin for this computer.",
     "language": "Interface language",
-    "enter": "Enter StockScan"
+    "company": "Company",
+    "locationCode": "Warehouse code",
+    "locationName": "Warehouse name",
+    "adminCode": "Admin ID",
+    "adminName": "Admin name",
+    "enter": "Enter StockScan",
+    "loadDemo": "Load demo data (dev)"
   },
   "inventory": {
     "title": "Inventory",
@@ -78,6 +93,33 @@
     "employeesTitle": "Employees",
     "preferencesTitle": "Preferences",
     "switchOperator": "Switch employee"
+  },
+  "employees": {
+    "hint": "Employees can be deactivated. History stays attached to their name.",
+    "code": "ID",
+    "name": "Name",
+    "role": "Role",
+    "roleOperator": "Operator",
+    "roleAdmin": "Admin",
+    "status": "Status",
+    "active": "Active",
+    "inactive": "Inactive",
+    "add": "Add employee",
+    "edit": "Edit",
+    "deactivate": "Deactivate",
+    "activate": "Activate",
+    "empty": "No employees yet.",
+    "adminOnly": "Only an admin can add or change employees."
+  },
+  "preferences": {
+    "hint": "These settings stay on this computer.",
+    "language": "Language",
+    "sound": "Sounds",
+    "soundHint": "Beeps after a scan. Unlock happens when you pick an employee.",
+    "fkeys": "F1–F4 mode keys",
+    "fkeysHint": "Turn off if a scanner sends function keys by mistake.",
+    "idleMinutes": "Idle session (minutes)",
+    "idleHint": "After this many minutes without a scan, the next scan starts a new session."
   },
   "exceptions": {
     "title": "Exceptions",
@@ -108,6 +150,15 @@
     "BACKUP_ERROR": "Backup failed. Check the backup folder.",
     "DB_ERROR": "System error. Please contact the admin.",
     "IO_ERROR": "System error. Please contact the admin.",
-    "INTERNAL": "System error. Please contact the admin."
+    "INTERNAL": "System error. Please contact the admin.",
+    "EMPLOYEE_CODE_IN_USE": "That employee ID is already used.",
+    "EMPLOYEE_CODE_INVALID": "Employee ID must be 1–16 letters or numbers.",
+    "EMPLOYEE_NAME_INVALID": "Enter a name (up to 80 characters).",
+    "LAST_ACTIVE_EMPLOYEE": "Keep at least one active employee.",
+    "LAST_ADMIN": "Keep at least one active admin.",
+    "SETUP_ALREADY_DONE": "Setup is already finished on this computer.",
+    "COMPANY_NAME_INVALID": "Enter the company name.",
+    "WAREHOUSE_INVALID": "Enter the warehouse code and name.",
+    "SETTINGS_RANGE": "That setting is out of range."
   }
 }

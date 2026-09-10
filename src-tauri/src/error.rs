@@ -58,6 +58,10 @@ impl AppError {
         Self::Internal(s.into())
     }
 
+    pub fn invalid(reason: &'static str) -> Self {
+        Self::InvalidInput(reason.to_string())
+    }
+
     pub fn import(kind: impl Into<String>, message: impl Into<String>) -> Self {
         let issue = ImportIssue {
             kind: kind.into(),

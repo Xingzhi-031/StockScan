@@ -21,6 +21,7 @@ export const qk = {
   exceptions: ["exceptions", "list"] as const,
   coverage: ["barcodes", "coverage"] as const,
   batches: ["exportBatches"] as const,
+  employees: ["employees"] as const,
 };
 
 export function invalidateAfterStockChange(qc: QueryClient, productId: number) {

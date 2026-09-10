@@ -41,6 +41,18 @@ pub fn migrate(conn: &mut Connection) -> Result<(), AppError> {
         .map_err(|e| AppError::internal(e.to_string()))
 }
 
+/// Write path: `BEGIN IMMEDIATE` so two writers fail fast instead of converting
+/// a deferred transaction into a deadlock.
+pub fn write<T, F>(conn: &mut Connection, f: F) -> Result<T, AppError>
+where
+    F: FnOnce(&rusqlite::Transaction<'_>) -> Result<T, AppError>,
+{
+    let tx = conn.transaction_with_behavior(rusqlite::TransactionBehavior::Immediate)?;
+    let value = f(&tx)?;
+    tx.commit()?;
+    Ok(value)
+}
+
 #[cfg(test)]
 mod tests;
 
